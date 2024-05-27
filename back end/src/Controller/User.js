@@ -3,6 +3,7 @@ const express = require("express");
 const app = express();
 const bcrypt = require("bcrypt");
 const { transporter } = require("../Services/mailer");
+const jwt = require("jsonwebtoken");
 
 const addUser = async (req, res) => {
   let pseudo = req.pseudo;
@@ -14,8 +15,17 @@ const addUser = async (req, res) => {
     const values = [email];
     const verifMail = `SELECT email FROM user WHERE email=?`;
     const [result] = await pool.execute(verifMail, values);
+
+    const valueP = [pseudo];
+    const verifpseudo = `SELECT pseudo FROM user WHERE pseudo=?`;
+    const [resultP] = await pool.execute(verifpseudo, valueP);
+
     if (result.length !== 0) {
       res.status(400).json({ error: "email existe" });
+      return;
+    }
+    if (resultP.length !== 0) {
+      res.status(400).json({ error: "pseudo existe" });
       return;
     } else {
       const hash = await bcrypt.hash(password, 10);
@@ -51,7 +61,8 @@ const addUser = async (req, res) => {
         const info = await transporter.sendMail({
           from: `${process.env.SMTP_EMAIL}`,
           to: `${process.env.EMAIL}`,
-          subject: "Email activation",
+          subject:
+            "Email activation const activationToken = await bcrypt.hash(em",
           text: "Activate your remail",
           html: `<p> You need to activate your email, to access our services, please click on this link :
                 <a href="http://localhost:3007/validAccount/${cleanToken}">Activate your email</a>
@@ -87,7 +98,7 @@ const valideAccount = async (req, res) => {
     const sqlValid = "UPDATE user SET isActive = 1, token = '' WHERE token = ?";
     const [updateToken] = await pool.execute(sqlValid, values);
     if (updateToken.affectedRows >= 1) {
-      return res.redirect("http://127.0.0.1:5500/front%20end/Views/login.html");
+      return res.redirect("http://127.0.0.1:5500/Views/login.html");
     }
   } catch (error) {
     res.status(500).json({ error: error.stack });
@@ -101,7 +112,10 @@ const login = async (req, res) => {
 
   try {
     const values = [email];
-    const sql = `SELECT *, FROM user  INNER JOIN role ON user.role_id = id_role WHERE user.email =  ? `;
+    const sql = `SELECT * 
+FROM user
+INNER JOIN role ON user.role_id = role.id_role
+WHERE user.email = ? AND user.isActive = 1;`;
     const [result] = await pool.execute(sql, values);
 
     console.log(result);
@@ -136,4 +150,133 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { addUser, valideAccount, login };
+const messageRecovery = async (req, res) => {
+  try {
+    const email = req.email;
+    const sql = `SELECT email FROM user WHERE email = ?`;
+    const values = [email];
+    const [result] = await pool.execute(sql, values);
+
+    if (result[0].length === 0) {
+      res.status(401).json({ error: "Invalid credentials or email not actif" });
+      return;
+    } else {
+      const sqlAddUser = "UPDATE user SET token =? WHERE email = ?";
+
+      const activationToken = await bcrypt.hash(email, 10);
+
+      let cleanToken = activationToken.replaceAll("/", "");
+
+      const insertValues = [cleanToken, email];
+
+      const [rows] = await pool.execute(sqlAddUser, insertValues);
+
+      if (rows.affectedRows > 0) {
+        const info = await transporter.sendMail({
+          from: `${process.env.SMTP_EMAIL}`,
+          to: `${process.env.EMAIL}`,
+          subject: "Reset password",
+          text: "Change your password",
+          html: `<p> You need to change your password, please click on this link :
+                <a href="http://localhost:3007/changePassword/${cleanToken}">Change password</a>
+          </p>`,
+        });
+
+        res.status(201).json({ success: "mail sending" });
+        return;
+      } else {
+        res.status(500).json({ error: "send failed." });
+        return;
+      }
+    }
+  } catch (error) {
+    res.status(500).json({ error: error.stack });
+    console.log(error.stack);
+  }
+};
+
+const validePassword = async (req, res) => {
+  try {
+    const token = req.params.token;
+
+    const sql = `SELECT * FROM user WHERE token = ?`;
+    const values = [token];
+    const [result] = await pool.execute(sql, values);
+
+    if (!result) {
+      res.status(204).json({ error: "invalide " });
+      return;
+    }
+
+    return res.redirect(
+      `http://127.0.0.1:5500/Views/newPassword.html?token=${token}`
+    );
+  } catch (error) {
+    res.status(500).json({ error: error.stack });
+    console.log(error.stack);
+  }
+};
+
+const newPassword = async (req, res) => {
+  const newPassword = req.newPassword;
+  const token = req.body.token;
+  const date = new Date();
+
+  console.log(newPassword);
+  console.log(token);
+  console.log(date);
+
+  try {
+    const hash = await bcrypt.hash(newPassword, 10);
+    const values = [hash, date, token];
+    const sql = `UPDATE user SET password = ?, token = '', updated_at = ?  WHERE token = ?;`;
+    const [result] = await pool.execute(sql, values);
+    console.log(result);
+
+    res.status(200).json(result);
+  } catch (err) {
+    console.log(err.stack);
+    res.status(500).json({ message: "erreur serveur" });
+  }
+};
+
+const adminSearchUser = async (req, res) => {
+  try {
+    const user = req.user;
+    console.log(user);
+    const sql = `SELECT * FROM user WHERE pseudo LIKE '%${user}%';`;
+    const [rows] = await pool.execute(sql);
+    console.log(rows[0]);
+    if (rows[0] != undefined) {
+      res.status(200).json(rows);
+    } else {
+      res.status(500).json({ message: "Erreur serveur" });
+    }
+  } catch (err) {
+    console.log(err.stack);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+};
+const userDisable = async (req, res) => {
+  try {
+    const user = req.body.id_user;
+    const value = [user];
+    const sql = `UPDATE user SET isActive = 0 where id_user= ? `;
+    const [result] = await pool.execute(sql, value);
+    res.status(200).json({ result });
+  } catch (err) {
+    console.log(err.stack);
+    res.status(500).json({ message: "erreur serveur" });
+  }
+};
+
+module.exports = {
+  addUser,
+  valideAccount,
+  login,
+  messageRecovery,
+  validePassword,
+  newPassword,
+  adminSearchUser,
+  userDisable,
+};

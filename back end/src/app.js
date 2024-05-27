@@ -6,6 +6,11 @@ const cors = require("cors");
 app.use(cors());
 require("dotenv").config();
 const userRouter = require("./Controller/routes/user");
+const postRouter = require("./Controller/routes/post");
+
+// app.use(express.static("./public"))
+
+const path = require("path");
 
 connect(process.env.DB_URL, (error) => {
   if (error) {
@@ -16,7 +21,8 @@ connect(process.env.DB_URL, (error) => {
   }
 });
 
-app.use("/", userRouter);
+app.use("/", userRouter, postRouter);
+app.use("/imageFile", express.static(__dirname + "/Controller/uploads/"));
 
 app.listen(process.env.PORT, () => {
   console.log("im listening on port", process.env.PORT);

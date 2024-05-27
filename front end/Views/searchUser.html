@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Home Social Brief</title>
+    <title>Search user Social Brief</title>
   </head>
   <body>
     <header class="w-full mt-5 text-gray-700 bg-white shadow-sm body-font">
@@ -15,27 +15,22 @@
             Social Brief
           </h1>
         </a>
+
         <nav class="flex items-start text-base md:ml-auto">
-          <button
-            class="mb-5 justify-center px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
-          >
-            <a href="./newFeed.html"> Neew feed </a>
-          </button>
-          <button
-            class="mb-5 justify-center px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
-          >
-            <a href="./searchUser.html"> Search User </a>
-          </button>
           <button
             class="mb-5 justify-center px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
           >
             <a href="./popularPost.html"> Popular post </a>
           </button>
           <button
-            onclick="modaleCreatePoste()"
             class="mb-5 justify-center px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
           >
-            Create Poste
+            <a href="./newFeed.html"> New feed </a>
+          </button>
+          <button
+            class="mb-5 justify-center px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
+          >
+            <a href="./user.html"> My post </a>
           </button>
         </nav>
         <div class="h-full pl-6 ml-6 border-l border-gray-200">
@@ -51,70 +46,49 @@
       <div
         class="relative flex min-h-screen flex-col justify-start overflow-hidden bg-slate-100 py-6 sm:py-12"
       >
-        <div
-          class="modaleCreatePost hidden flex min-h-full flex-col justify-center px-6 py-12 lg:px-8"
-        >
-          <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-            <h2
-              class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900"
-            >
-              Create your post
-            </h2>
-          </div>
-
-          <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-            <div class="space-y-6" action="#" method="POST">
-              <div>
-                <label
-                  for="picture"
-                  class="block text-sm font-medium leading-6 text-gray-900"
-                  >Your gif</label
-                >
-                <div class="mt-2">
-                  <input
-                    id="picture"
-                    name="picture"
-                    type="file"
-                    required
-                    class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 indent-3 picture"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <div class="flex items-center justify-between">
-                  <label
-                    class="block text-sm font-medium leading-6 text-gray-900"
-                    >Comment</label
-                  >
-                </div>
-                <div class="mt-2">
-                  <input
-                    type="text"
-                    required
-                    class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 indent-3 comment"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <button
-                  onclick="insertPost()"
-                  class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                >
-                  Post
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="w-4/6mx-auto py-4 flex justify-center flex-col">
+        <div class="w-5/6 mx-auto py-4 flex justify-center flex-col">
           <h2
             class="font-bold text-center text-6xl text-slate-700 font-display"
           >
-            Mes postes
+            Search user
           </h2>
+
+          <div class="border-gray-200 border mt-5 rounded-lg flex bg-white">
+            <input
+              class="search w-full bg-transparent px-4 py-1 text-gray-400 outline-none focus:outline-none"
+              type="search"
+              name="search"
+              placeholder="Search..."
+            />
+            <button
+              onclick="searchUser()"
+              type="submit"
+              class="m-2 rounded bg-orange-600 px-4 py-2 text-white"
+            >
+              <svg
+                class="fill-current h-6 w-6"
+                xmlns="http://www.w3.org/2000/svg"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+                version="1.1"
+                id="Capa_1"
+                x="0px"
+                y="0px"
+                viewBox="0 0 56.966 56.966"
+                style="enable-background: new 0 0 56.966 56.966"
+                xml:space="preserve"
+                width="512px"
+                height="512px"
+              >
+                <path
+                  d="M55.146,51.887L41.588,37.786c3.486-4.144,5.396-9.358,5.396-14.786c0-12.682-10.318-23-23-23s-23,10.318-23,23  s10.318,23,23,23c4.761,0,9.298-1.436,13.177-4.162l13.661,14.208c0.571,0.593,1.339,0.92,2.162,0.92  c0.779,0,1.518-0.297,2.079-0.837C56.255,54.982,56.293,53.08,55.146,51.887z M23.984,6c9.374,0,17,7.626,17,17s-7.626,17-17,17  s-17-7.626-17-17S14.61,6,23.984,6z"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <div
+            class="profile text-6xl flex flex-col items-center justify-center gap-6 mt-6"
+          ></div>
           <div
             class="cards flex flex-col items-center justify-center gap-6 mt-6"
           ></div>
@@ -220,7 +194,7 @@
     </div>
   </footer>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="../js/post.js"></script>
+  <script src="../js/searchPostUser.js"></script>
   <script src="../js/logout.js"></script>
   <script src="../js/modale.js"></script>
   <script

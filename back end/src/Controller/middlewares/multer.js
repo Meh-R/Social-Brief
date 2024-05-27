@@ -17,13 +17,13 @@ let storage = multer.diskStorage({
   },
 });
 
-const maxSize = 3 * 1000 * 1000;
+const maxSize = 5 * 1000 * 1000;
 
 let upload = multer({
   storage: storage,
 
   fileFilter: function (req, file, cb) {
-    var filetypes = /jpeg|jpg|png|gif|svg/;
+    var filetypes = /jpeg|jpg|png|gif|avif|svg|webp|webm/;
     var mimetype = filetypes.test(file.mimetype);
 
     var extname = filetypes.test(path.extname(file.originalname).toLowerCase());
