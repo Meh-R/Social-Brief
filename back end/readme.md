@@ -24,6 +24,8 @@ referer vous au .env.exemple
 
 Remplasser: Dans backend/src/Controller/User/ligne63 process.env.EMAIL par email et ligne177 process.env.EMAIL par email
 
+Crée un dossier nommé uploads dans backend/src/Controller 
+
 ## KeyFeatures
 
 - Creation de compte avec validation par email.
